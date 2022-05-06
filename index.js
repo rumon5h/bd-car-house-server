@@ -10,7 +10,6 @@ const app = express();
 app.use(express());
 app.use(cors());
 
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@carexportcompany.plhyy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -19,7 +18,14 @@ async function run() {
         await client.connect()
         const carCollection = client.db("cars").collection("car");
         const expertCollection = client.db("experts").collection("expert");
-        
+        const serviceCollection = client.db('services').collection('service');
+
+        // GET SERVICES DATA
+        app.get('/services', async(req, res) =>{
+            const cursor = serviceCollection.find({});
+            const services = await cursor.toArray();
+            res.send(services);
+        })
 
         // GET CARS DATA
         app.get('/cars', async (req, res) => {
