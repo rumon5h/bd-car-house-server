@@ -7,7 +7,7 @@ const app = express();
 
 
 // Middleware
-app.use(express());
+app.use(express.json());
 app.use(cors());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@carexportcompany.plhyy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -34,13 +34,22 @@ async function run() {
             res.send(cars)
         });
 
+        // POST NEW CAR
+        app.post('/car', async(req, res) =>{
+            const car = req.body;
+            const result = await carCollection.insertOne(car);
+            console.log(result);
+            res.send(result)
+        })
+        
         // GET EXPERTS INFORMATION
         app.get('/experts', async(req, res) =>{
             const cursor = expertCollection.find({});
             const experts = await cursor.toArray();
             res.send(experts)
-        })
+        });
 
+        
         app.put('/car/:id', async (req, res) => {
             const id = req.params.id;
             const data = req.body;
