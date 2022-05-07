@@ -49,7 +49,14 @@ async function run() {
             res.send(experts)
         });
 
+        // GET PAGE COUNT
+        app.get('/pageCount', async(req, res) =>{
+            const cursor = carCollection.find({})
+            const count = await cursor.count();
+            res.send({count})
+        })
         
+
         app.put('/car/:id', async (req, res) => {
             const id = req.params.id;
             const data = req.body;
