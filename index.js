@@ -29,10 +29,21 @@ async function run() {
 
         // GET CARS DATA
         app.get('/cars', async (req, res) => {
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+            
             const cursor = carCollection.find({});
-            const cars = await cursor.toArray();
+            const cars = await cursor.skip(page*size).limit(size).toArray();         
             res.send(cars)
         });
+
+        // GET SINGLE CAR
+        app.get('/car/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const car = await carCollection.findOne(query);
+            res.send(car)
+        })
 
         // POST NEW CAR
         app.post('/car', async(req, res) =>{
@@ -50,9 +61,9 @@ async function run() {
         });
 
         // GET PAGE COUNT
-        app.get('/pageCount', async(req, res) =>{
-            const cursor = carCollection.find({})
-            const count = await cursor.count();
+        app.get('/carCount', async(req, res) =>{
+            
+            const count = await carCollection.estimatedDocumentCount();
             res.send({count})
         })
         
