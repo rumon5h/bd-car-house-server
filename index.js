@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const port = process.env.PORT || 5000;
@@ -59,6 +60,15 @@ async function run() {
             const result = await carCollection.insertOne(car);
             console.log(result);
             res.send(result)
+        });
+
+        // GET MY CARS
+        app.get('/myCar', async(req, res)=>{
+           const email = req.query.email;
+           const query = {email}
+           const cursor = carCollection.find(query);
+           const result = await cursor.toArray();
+           res.send(result)
         })
         
         // GET EXPERTS INFORMATION
