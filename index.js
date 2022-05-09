@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@carexportcompany.plhyy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@carexportcompany.plhyy.mongodb.net/myFirstnewCarbase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run() {
@@ -21,14 +21,14 @@ async function run() {
         const expertCollection = client.db("experts").collection("expert");
         const serviceCollection = client.db('services').collection('service');
 
-        // GET SERVICES DATA
+        // GET SERVICES newCar
         app.get('/services', async(req, res) =>{
             const cursor = serviceCollection.find({});
             const services = await cursor.toArray();
             res.send(services);
         })
 
-        // GET CARS DATA
+        // GET CARS newCar
         app.get('/cars', async (req, res) => {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
@@ -85,20 +85,19 @@ async function run() {
             res.send({count})
         })
         
-
+        // UPDATE QUANTITY
         app.put('/car/:id', async (req, res) => {
             const id = req.params.id;
-            const data = req.body;
-            console.log(req.params);
+            const newCar = req.body;
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
-
+            
             const updateDoc = {
                 $set: {
-                    ...data
+                    productName: newCar?.newCar?.productName, price: newCar?.newCar?.price, buildYear: newCar?.newCar?.buildYear, image: newCar?.newCar?.image, creatorName: newCar?.newCar?.creatorName, quantity: newCar?.newCar?.quantity, description: newCar?.newCar?.description
                 },
             };
-            console.log(data);
+            
             const result = await carCollection.updateOne(filter, updateDoc, options);
             res.send(result);
         })
